@@ -19,7 +19,7 @@ public class UserController : ControllerBase
         {
             if (string.IsNullOrWhiteSpace(user?.name))
             {
-                return BadRequest("The name field is required.");
+                return BadRequest("The name field is required");
             }
 
             var createdUser = await _userService.CreateUser(user);
