@@ -1,8 +1,12 @@
-using Microsoft.AspNetCore.Mvc;
+using UserMicroservice.Models;
 
-public interface IUserService
+namespace UserMicroservice.Interface
 {
-    Task<User> CreateUser(User user);
-    Task<User> UpdateUser(int id, User user);
-    Task<bool> DeleteUser(int id);
+    public interface IUserService
+    {
+        Task<User> CreateUser(User user);
+        Task<User> UpdateUser(int id, User user);
+        Task<User> GetUser(int id);
+        Task<bool> DeleteUser(int id);
+    }
 }

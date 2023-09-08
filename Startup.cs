@@ -1,5 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System;
+using UserMicroservice.Data;
+using UserMicroservice.Interface;
+using UserMicroservice.Service;
 
 namespace UserMicroservice
 {
@@ -23,13 +26,13 @@ namespace UserMicroservice
 
         }
 
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, AppDbContext dbContext)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            dbContext.Database.Migrate();
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseAuthorization();

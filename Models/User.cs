@@ -1,12 +1,20 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-public class User
+namespace UserMicroservice.Models
 {
-    [Key]
-    public int id { get; set; }
+    [Table("User")]
+    public class User
+    {
+        [Column("Id")]
+        [Key]
+        public int Id { get; set; }
 
-    public string? name { get; set; }
+        [Column("Name")]
+        public string? Name { get; set; }
 
-    [EmailAddress]
-    public string? email { get; set; }
+        [Column("Email")]
+        [EmailAddress]
+        public string? Email { get; set; }
+    }
 }

@@ -1,11 +1,15 @@
 using Microsoft.EntityFrameworkCore;
+using UserMicroservice.Models;
 
-public class AppDbContext : DbContext
+namespace UserMicroservice.Data
 {
-    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+    public class AppDbContext : DbContext
     {
-        users = Set<User>();
-    }
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
+        {
+            Users = Set<User>();
+        }
 
-    public DbSet<User> users { get; set; }
+        public DbSet<User> Users { get; set; }
+    }
 }

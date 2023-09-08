@@ -1,72 +1,87 @@
 using System.Linq.Expressions;
 using Microsoft.AspNetCore.Mvc;
+using UserMicroservice.Interface;
+using UserMicroservice.middleware;
+using UserMicroservice.Models;
 
-[ApiController]
-[Route("/users")]
-public class UserController : ControllerBase
+namespace UserMicroservice.Controllers
 {
-    private readonly IUserService _userService = null!;
-
-    public UserController(IUserService userService)
+    [ApiController]
+    [Route("/users")]
+    public class UserController : ControllerBase
     {
-        _userService = userService;
-    }
+        private readonly IUserService _userService = null!;
 
-    [HttpPost]
-    public async Task<ActionResult<User>> CreateUser([FromBody] User user)
-    {
-        try
+        public UserController(IUserService userService)
         {
-            if (string.IsNullOrWhiteSpace(user?.name))
+            _userService = userService;
+        }
+
+        [HttpPost]
+        public async Task<ActionResult<User>> CreateUser([FromBody] User user)
+        {
+            try
             {
-                return BadRequest("The name field is required");
+                if (string.IsNullOrWhiteSpace(user?.Name))
+                {
+                    return BadRequest("The name field is required");
+                }
+
+                var createdUser = await _userService.CreateUser(user);
+                return CreatedAtAction(nameof(CreateUser), new { createdUser.Id }, createdUser);
             }
-
-            var createdUser = await _userService.CreateUser(user);
-            return CreatedAtAction(nameof(CreateUser), new { id = createdUser.id }, createdUser);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-        catch (Exception)
-        {
-            return StatusCode(500);
-        }
-    }
-
-    [HttpPut("{id}")]
-    public async Task<ActionResult<User>> UpdateUser(int id, User user)
-    {
-        try
-        {
-            var UpdatedUser = await _userService.UpdateUser(id, user);
-            return Ok(UpdatedUser);
-        }
-        catch (UserNotFoundException)
-        {
-            return BadRequest("No such user found");
-        }
-    }
-
-    [HttpDelete("{id}")]
-    public async Task<ActionResult> DeleteUser(int id)
-    {
-        try
-        {
-            var deletedUser = await _userService.DeleteUser(id);
-            if (deletedUser)
+            catch (ArgumentException ex)
             {
-                return Ok("UserDeleted");
+                return BadRequest(ex.Message);
             }
-            else
+        }
+        [HttpGet("{Id}")]
+        public async Task<ActionResult<User>> GetUser(int Id)
+        {
+            try
+            {
+                var user = await _userService.GetUser(Id);
+                return user == null ? throw new Exception($"User ID {{Id}} not found") : (ActionResult<User>)user;
+            }
+            catch (UserNotFoundException)
+            {
+                return NotFound("No such user found");
+            }
+        }
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<User>> UpdateUser(int Id, User user)
+        {
+            try
+            {
+                var UpdatedUser = await _userService.UpdateUser(Id, user);
+                return Ok(UpdatedUser);
+            }
+            catch (UserNotFoundException)
+            {
+                return NotFound("No such user found");
+            }
+        }
+
+        [HttpDelete("{Id}")]
+        public async Task<ActionResult> DeleteUser(int Id)
+        {
+            try
+            {
+                var deletedUser = await _userService.DeleteUser(Id);
+                if (deletedUser)
+                {
+                    return Ok("UserDeleted");
+                }
+                else
+                {
+                    return NotFound("UserNotFound");
+                }
+            }
+            catch (UserNotFoundException)
             {
                 return NotFound("UserNotFound");
             }
-        }
-        catch (UserNotFoundException)
-        {
-            return NotFound("UserNotFound");
         }
     }
 }

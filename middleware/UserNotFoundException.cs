@@ -1,6 +1,9 @@
-public class UserNotFoundException : Exception
+namespace UserMicroservice.middleware
 {
-    public UserNotFoundException() : base("User not found.")
+    public class UserNotFoundException : Exception
     {
+        public UserNotFoundException() : base("User not found.")
+        {
+        }
     }
 }
